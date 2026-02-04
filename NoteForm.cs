@@ -454,13 +454,13 @@ Regels:
 - Merge samenhangende notities in 1 regel als dat logisch is.
 - Houd de tekst compact en zakelijk.
 - Technische termen en namen behouden.
-- Gebruik verleden tijd waar passend.
+- Schrijf altijd in tegenwoordige formulering (bijv. "Ik heb contact gehad met...", "Ik heb een...", "Gebruiker gaat morgen...").
 
 Stijlvoorbeeld:
-- Sharissa meldde problemen met de dongle van een ouder Microsoft-toetsenbord.
-- De dongle werd verwijderd en de pc herstart, maar het probleem bleef bestaan.
-- Nadat de dongle dichterbij was geplaatst, werd de verbinding iets stabieler.
-- Advies: vervang het toetsenbord om storingen en tijdverlies te voorkomen.
+- Ik heb contact gehad met Sharissa over problemen met de dongle van een ouder Microsoft-toetsenbord.
+- Ik heb de dongle verwijderd en de pc herstart, maar het probleem blijft aanwezig.
+- Ik heb de dongle dichterbij geplaatst en de verbinding is iets stabieler.
+- Gebruiker gaat morgen akkoord geven op vervanging van het toetsenbord.
 
 Notities:
 {notes}
