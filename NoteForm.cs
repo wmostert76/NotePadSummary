@@ -16,8 +16,8 @@ public class NoteForm : Form
     {
         // Form instellingen
         Text = "NotePad Summary";
-        Size = new Size(600, 800);
-        MinimumSize = new Size(400, 350);
+        Size = new Size(900, 800);
+        MinimumSize = new Size(650, 420);
         StartPosition = FormStartPosition.CenterScreen;
         Icon = CreateFormIcon();
 
@@ -144,7 +144,14 @@ public class NoteForm : Form
         notesPanel.Controls.Add(notesTextBox);
         notesPanel.Controls.Add(notesLabel);
 
-        // Samenvatting panel (onder)
+        // Samenvatting/SO panel (onder)
+        var outputSplitContainer = new SplitContainer
+        {
+            Dock = DockStyle.Fill,
+            Orientation = Orientation.Vertical,
+            SplitterWidth = 8
+        };
+
         var summaryPanel = new Panel { Dock = DockStyle.Fill };
         var summaryLabel = new Label
         {
@@ -166,8 +173,32 @@ public class NoteForm : Form
         summaryPanel.Controls.Add(summaryTextBox);
         summaryPanel.Controls.Add(summaryLabel);
 
+        var soPanel = new Panel { Dock = DockStyle.Fill };
+        var soLabel = new Label
+        {
+            Text = "SO tekst:",
+            Dock = DockStyle.Top,
+            Height = 25,
+            Font = new Font(Font.FontFamily, 10, FontStyle.Bold)
+        };
+        var soTextBox = new TextBox
+        {
+            Dock = DockStyle.Fill,
+            Multiline = true,
+            ScrollBars = ScrollBars.Vertical,
+            Font = new Font("Consolas", 10),
+            ReadOnly = true,
+            BackColor = Color.FromArgb(245, 245, 245),
+            Name = "soTextBox"
+        };
+        soPanel.Controls.Add(soTextBox);
+        soPanel.Controls.Add(soLabel);
+
+        outputSplitContainer.Panel1.Controls.Add(summaryPanel);
+        outputSplitContainer.Panel2.Controls.Add(soPanel);
+
         splitContainer.Panel1.Controls.Add(notesPanel);
-        splitContainer.Panel2.Controls.Add(summaryPanel);
+        splitContainer.Panel2.Controls.Add(outputSplitContainer);
 
         // Knoppen panel
         var buttonPanel = new FlowLayoutPanel
@@ -186,7 +217,7 @@ public class NoteForm : Form
             FlatStyle = FlatStyle.Flat,
             Cursor = Cursors.Hand
         };
-        summarizeButton.Click += async (s, e) => await OnSummarizeClick(notesTextBox, summaryTextBox, summarizeButton);
+        summarizeButton.Click += async (s, e) => await OnSummarizeClick(notesTextBox, summaryTextBox, soTextBox, summarizeButton);
 
         var soButton = new Button
         {
@@ -196,7 +227,7 @@ public class NoteForm : Form
             FlatStyle = FlatStyle.Flat,
             Cursor = Cursors.Hand
         };
-        soButton.Click += async (s, e) => await OnSalesOpportunityClick(summaryTextBox, soButton);
+        soButton.Click += async (s, e) => await OnSalesOpportunityClick(summaryTextBox, soTextBox, soButton);
 
         var clearButton = new Button
         {
@@ -210,6 +241,7 @@ public class NoteForm : Form
         {
             notesTextBox.Clear();
             summaryTextBox.Clear();
+            soTextBox.Clear();
         };
 
         var copyButton = new Button
@@ -250,6 +282,18 @@ public class NoteForm : Form
             }
         };
 
+        outputSplitContainer.SizeChanged += (s, e) =>
+        {
+            if (outputSplitContainer.Width > outputSplitContainer.Panel1MinSize + outputSplitContainer.Panel2MinSize)
+            {
+                try
+                {
+                    outputSplitContainer.SplitterDistance = outputSplitContainer.Width / 2;
+                }
+                catch { }
+            }
+        };
+
         tabPage.Controls.Add(tabPanel);
         _tabControl.TabPages.Add(tabPage);
         _tabControl.SelectedTab = tabPage;
@@ -259,7 +303,7 @@ public class NoteForm : Form
         {
             if (e.Control && e.KeyCode == Keys.Enter)
             {
-                await OnSummarizeClick(notesTextBox, summaryTextBox, summarizeButton);
+                await OnSummarizeClick(notesTextBox, summaryTextBox, soTextBox, summarizeButton);
                 e.Handled = true;
                 e.SuppressKeyPress = true;
             }
@@ -306,7 +350,7 @@ public class NoteForm : Form
         timer.Start();
     }
 
-    private async Task OnSummarizeClick(TextBox notesTextBox, TextBox summaryTextBox, Button summarizeButton)
+    private async Task OnSummarizeClick(TextBox notesTextBox, TextBox summaryTextBox, TextBox soTextBox, Button summarizeButton)
     {
         var notes = notesTextBox.Text.Trim();
         if (string.IsNullOrWhiteSpace(notes))
@@ -319,6 +363,7 @@ public class NoteForm : Form
         summarizeButton.Enabled = false;
         summarizeButton.Text = "Bezig...";
         summaryTextBox.Text = "Even geduld, samenvatting wordt gemaakt...";
+        soTextBox.Clear();
 
         try
         {
@@ -344,7 +389,7 @@ public class NoteForm : Form
         }
     }
 
-    private async Task OnSalesOpportunityClick(TextBox summaryTextBox, Button soButton)
+    private async Task OnSalesOpportunityClick(TextBox summaryTextBox, TextBox soTextBox, Button soButton)
     {
         var summary = summaryTextBox.Text.Trim();
         if (string.IsNullOrWhiteSpace(summary))
@@ -356,18 +401,19 @@ public class NoteForm : Form
 
         soButton.Enabled = false;
         soButton.Text = "Bezig...";
+        soTextBox.Text = "Even geduld, SO-tekst wordt gemaakt...";
 
         try
         {
             var salesOpportunityText = await GenerateSalesOpportunityAsync(summary);
-            summaryTextBox.Text = salesOpportunityText;
+            soTextBox.Text = salesOpportunityText;
 
             Clipboard.SetText(salesOpportunityText);
             ShowStatus("SO-tekst gekopieerd naar klembord!");
         }
         catch (Exception ex)
         {
-            summaryTextBox.Text = $"Fout bij SO maken: {ex.Message}";
+            soTextBox.Text = $"Fout bij SO maken: {ex.Message}";
             ShowStatus("Er ging iets mis bij het maken van SO.");
         }
         finally
@@ -426,14 +472,17 @@ Notities:
     private async Task<string> GenerateSalesOpportunityAsync(string summary)
     {
         var prompt = $"""
-Maak van onderstaande samenvatting een korte Sales Opportunity tekst in het Nederlands.
+Maak van onderstaande samenvatting een korte Sales Opportunity tekst voor intern gebruik bij de verkoopafdeling.
 
 Regels:
-- Maximaal 4 bullets.
+- Maximaal 3 bullets.
 - Elke regel begint met een streepje (-).
-- Schrijf compact, concreet en commercieel.
-- Benoem: situatie, impact, advies en vervolgstap.
-- Geen vage tekst, wel direct bruikbaar voor CRM.
+- Korte, amicale zinnen. Niet te formeel.
+- Combineer waar mogelijk situatie + impact in 1 zin.
+- Focus op praktisch advies met hardwarevervanging als logische stap bij oude of instabiele apparatuur.
+- Niet verwijzen naar endpoint/monitoring services.
+- Geen labels zoals "Situatie:", "Impact:", "Advies:" of "Vervolgstap:".
+- Direct bruikbaar voor CRM.
 
 Input samenvatting:
 {summary}

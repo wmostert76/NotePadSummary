@@ -10,7 +10,7 @@ Een handige Windows systray applicatie waarmee je snel notities kunt maken en au
 - **Globale Hotkey** - `Ctrl + NumPad+` opent direct het notitievenster
 - **Tabbladen** - Meerdere notities tegelijk open, elk met datum/tijd
 - **AI Samenvatting** - Zet rommelige notities om in bondige bullet points via Codex CLI
-- **SO-knop** - Zet een samenvatting om naar compacte Sales Opportunity bullets
+- **SO-knop + SO-veld** - Zet een samenvatting om naar compacte Sales Opportunity bullets in een apart veld
 - **Auto Clipboard** - Samenvatting wordt automatisch naar klembord gekopieerd
 - **Windows Startup** - Optioneel automatisch starten met Windows
 
