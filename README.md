@@ -10,6 +10,7 @@ Een handige Windows systray applicatie waarmee je snel notities kunt maken en au
 - **Globale Hotkey** - `Ctrl + NumPad+` opent direct het notitievenster
 - **Tabbladen** - Meerdere notities tegelijk open, elk met datum/tijd
 - **AI Samenvatting** - Zet rommelige notities om in bondige bullet points via Codex CLI
+- **SO-knop** - Zet een samenvatting om naar compacte Sales Opportunity bullets
 - **Auto Clipboard** - Samenvatting wordt automatisch naar klembord gekopieerd
 - **Windows Startup** - Optioneel automatisch starten met Windows
 
@@ -40,6 +41,7 @@ dotnet build --configuration Release
 | Nieuw tabblad | `Ctrl + T` of hotkey als venster open is |
 | Tabblad sluiten | Rechtermuisklik op tab |
 | Samenvatten | Klik "Samenvatten" of `Ctrl + Enter` |
+| Sales Opportunity maken | Klik `SO` (op basis van samenvatting) |
 | Venster verbergen | `Escape` |
 
 ## 🎨 Screenshots

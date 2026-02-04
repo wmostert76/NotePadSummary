@@ -188,6 +188,16 @@ public class NoteForm : Form
         };
         summarizeButton.Click += async (s, e) => await OnSummarizeClick(notesTextBox, summaryTextBox, summarizeButton);
 
+        var soButton = new Button
+        {
+            Text = "SO",
+            Size = new Size(70, 30),
+            Margin = new Padding(0, 0, 10, 0),
+            FlatStyle = FlatStyle.Flat,
+            Cursor = Cursors.Hand
+        };
+        soButton.Click += async (s, e) => await OnSalesOpportunityClick(summaryTextBox, soButton);
+
         var clearButton = new Button
         {
             Text = "Wissen",
@@ -220,6 +230,7 @@ public class NoteForm : Form
         };
 
         buttonPanel.Controls.Add(summarizeButton);
+        buttonPanel.Controls.Add(soButton);
         buttonPanel.Controls.Add(clearButton);
         buttonPanel.Controls.Add(copyButton);
 
@@ -333,6 +344,39 @@ public class NoteForm : Form
         }
     }
 
+    private async Task OnSalesOpportunityClick(TextBox summaryTextBox, Button soButton)
+    {
+        var summary = summaryTextBox.Text.Trim();
+        if (string.IsNullOrWhiteSpace(summary))
+        {
+            MessageBox.Show("Maak eerst een samenvatting.", "Geen samenvatting",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+
+        soButton.Enabled = false;
+        soButton.Text = "Bezig...";
+
+        try
+        {
+            var salesOpportunityText = await GenerateSalesOpportunityAsync(summary);
+            summaryTextBox.Text = salesOpportunityText;
+
+            Clipboard.SetText(salesOpportunityText);
+            ShowStatus("SO-tekst gekopieerd naar klembord!");
+        }
+        catch (Exception ex)
+        {
+            summaryTextBox.Text = $"Fout bij SO maken: {ex.Message}";
+            ShowStatus("Er ging iets mis bij het maken van SO.");
+        }
+        finally
+        {
+            soButton.Enabled = true;
+            soButton.Text = "SO";
+        }
+    }
+
     private static string FindCodexPath()
     {
         var possiblePaths = new[]
@@ -355,8 +399,51 @@ public class NoteForm : Form
 
     private async Task<string> GenerateSummaryAsync(string notes)
     {
-        var prompt = $"Maak een korte puntsgewijze samenvatting in het Nederlands. Regels:\n- Elke regel begint met streepje (-)\n- Zeer korte zinnen, max 8 woorden\n- Verleden tijd, direct en bondig\n- Geen 'dat' constructies\n- Technische termen behouden\n\nVoorbeeld stijl:\n- Telefoongesprek gevoerd met Jantje (Inkoop).\n- Printprobleem gemeld, foutmelding driver not found.\n- Herstart geprobeerd, geen resultaat.\n- Driver opnieuw geïnstalleerd via fabrikant.\n- Testpagina succesvol geprint.\n- Ticket gesloten.\n\nNotities:\n{notes}";
+        var prompt = $"""
+Maak een puntsgewijze samenvatting in het Nederlands.
 
+Regels:
+- Elke regel begint met een streepje (-).
+- Gebruik korte, natuurlijke zinnen.
+- Merge samenhangende notities in 1 regel als dat logisch is.
+- Houd de tekst compact en zakelijk.
+- Technische termen en namen behouden.
+- Gebruik verleden tijd waar passend.
+
+Stijlvoorbeeld:
+- Sharissa meldde problemen met de dongle van een ouder Microsoft-toetsenbord.
+- De dongle werd verwijderd en de pc herstart, maar het probleem bleef bestaan.
+- Nadat de dongle dichterbij was geplaatst, werd de verbinding iets stabieler.
+- Advies: vervang het toetsenbord om storingen en tijdverlies te voorkomen.
+
+Notities:
+{notes}
+""";
+
+        return await ExecuteCodexPromptAsync(prompt);
+    }
+
+    private async Task<string> GenerateSalesOpportunityAsync(string summary)
+    {
+        var prompt = $"""
+Maak van onderstaande samenvatting een korte Sales Opportunity tekst in het Nederlands.
+
+Regels:
+- Maximaal 4 bullets.
+- Elke regel begint met een streepje (-).
+- Schrijf compact, concreet en commercieel.
+- Benoem: situatie, impact, advies en vervolgstap.
+- Geen vage tekst, wel direct bruikbaar voor CRM.
+
+Input samenvatting:
+{summary}
+""";
+
+        return await ExecuteCodexPromptAsync(prompt);
+    }
+
+    private async Task<string> ExecuteCodexPromptAsync(string prompt)
+    {
         var escapedPrompt = prompt
             .Replace("\\", "\\\\")
             .Replace("\"", "\\\"")

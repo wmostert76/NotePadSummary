@@ -1,12 +1,31 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace NotePadSummary;
 
 public class AboutForm : Form
 {
+    private static string GetDisplayVersion()
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        var informationalVersion = assembly
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+            .InformationalVersion;
+
+        if (!string.IsNullOrWhiteSpace(informationalVersion))
+        {
+            return informationalVersion.Split('+')[0];
+        }
+
+        var version = assembly.GetName().Version;
+        return version is null
+            ? "0.0.0"
+            : $"{version.Major}.{version.Minor}.{version.Build}";
+    }
+
     public AboutForm()
     {
         Text = "Over NotePad Summary";
@@ -48,7 +67,7 @@ public class AboutForm : Form
         // Versie in header
         var versionLabel = new Label
         {
-            Text = "Versie 1.0.0",
+            Text = $"Versie {GetDisplayVersion()}",
             Font = new Font("Segoe UI", 10),
             ForeColor = Color.FromArgb(220, 220, 220),
             BackColor = Color.Transparent,
