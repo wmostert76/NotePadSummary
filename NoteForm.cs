@@ -460,12 +460,13 @@ Regels:
 - Merge samenhangende notities in 1 regel als dat logisch is.
 - Houd de tekst compact en zakelijk.
 - Technische termen en namen behouden.
-- Schrijf altijd in tegenwoordige formulering (bijv. "Ik heb contact gehad met...", "Ik heb een...", "Gebruiker gaat morgen...").
+- Vermijd "ik" en "wij". Schrijf neutraal (bijv. "Gebruiker meldt...", "Printerdriver verwijderd...", "Printer opnieuw toegevoegd...").
+- Schrijf altijd in tegenwoordige formulering (bijv. "Gebruiker meldt...", "Gebruiker gaat morgen...").
 
 Stijlvoorbeeld:
-- Ik heb contact gehad met Sharissa over problemen met de dongle van een ouder Microsoft-toetsenbord.
-- Ik heb de dongle verwijderd en de pc herstart, maar het probleem blijft aanwezig.
-- Ik heb de dongle dichterbij geplaatst en de verbinding is iets stabieler.
+- Contact gehad met Sharissa over problemen met de dongle van een ouder Microsoft-toetsenbord.
+- Dongle verwijderd en pc herstart, maar het probleem blijft aanwezig.
+- Dongle dichterbij geplaatst en de verbinding is iets stabieler.
 - Gebruiker gaat morgen akkoord geven op vervanging van het toetsenbord.
 
 Notities:

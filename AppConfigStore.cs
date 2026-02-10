@@ -27,7 +27,8 @@ Stijlregels:
 - Gebruik bullets met een streepje (-) wanneer je een samenvatting/overzicht geeft.
 - Houd tekst compact en zakelijk (geen lange uitleg).
 - Technische termen en namen behouden.
-- Schrijf waar mogelijk in tegenwoordige formulering (bijv. "Ik heb contact gehad met...", "Gebruiker gaat morgen...").
+- Vermijd "ik" en "wij". Schrijf neutraal (bijv. "Gebruiker meldt...", "Printerdriver verwijderd...", "Printer opnieuw toegevoegd...").
+- Schrijf waar mogelijk in tegenwoordige formulering (bijv. "Gebruiker meldt...", "Gebruiker gaat morgen...").
 - Voeg geen voorwoorden, excuses of meta-tekst toe; geef direct het resultaat.
 """;
 
