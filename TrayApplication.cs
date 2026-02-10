@@ -49,7 +49,8 @@ public class TrayApplication : IDisposable
         _startupMenuItem.CheckedChanged += OnStartupChanged;
         _contextMenu.Items.Add(_startupMenuItem);
 
-        _contextMenu.Items.Add("System prompt...", null, OnSystemPrompt);
+        _contextMenu.Items.Add("System prompt (samenvatten)...", null, OnSummarySystemPrompt);
+        _contextMenu.Items.Add("System prompt (SO)...", null, OnSalesOpportunitySystemPrompt);
 
         _contextMenu.Items.Add("-");
         _contextMenu.Items.Add("Over...", null, OnAbout);
@@ -199,18 +200,44 @@ public class TrayApplication : IDisposable
         aboutForm.ShowDialog();
     }
 
-    private void OnSystemPrompt(object? sender, EventArgs e)
+    private void OnSummarySystemPrompt(object? sender, EventArgs e)
     {
         try
         {
             using var form = new SystemPromptForm(
-                AppConfigStore.GetEffectiveSystemPrompt(_config),
-                AppConfigStore.DefaultSystemPrompt);
+                "System prompt (samenvatten)",
+                "Pas hier de system prompt aan voor Samenvatten. Wordt opgeslagen in je Documents folder (OneDrive sync).",
+                AppConfigStore.GetEffectiveSystemPrompt(_config, AppConfigStore.PromptKind.Summary),
+                AppConfigStore.DefaultSummarySystemPrompt);
 
             if (form.ShowDialog() != DialogResult.OK)
                 return;
 
-            _config.SystemPrompt = form.SystemPromptText;
+            _config.SummarySystemPrompt = form.SystemPromptText;
+            AppConfigStore.Save(_config);
+            ShowBalloon("NotePad Summary", $"System prompt opgeslagen in: {AppConfigStore.ConfigPath}");
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Kon system prompt niet opslaan: {ex.Message}", "Fout",
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    private void OnSalesOpportunitySystemPrompt(object? sender, EventArgs e)
+    {
+        try
+        {
+            using var form = new SystemPromptForm(
+                "System prompt (SO)",
+                "Pas hier de system prompt aan voor de SO knop. Wordt opgeslagen in je Documents folder (OneDrive sync).",
+                AppConfigStore.GetEffectiveSystemPrompt(_config, AppConfigStore.PromptKind.SalesOpportunity),
+                AppConfigStore.DefaultSalesOpportunitySystemPrompt);
+
+            if (form.ShowDialog() != DialogResult.OK)
+                return;
+
+            _config.SalesOpportunitySystemPrompt = form.SystemPromptText;
             AppConfigStore.Save(_config);
             ShowBalloon("NotePad Summary", $"System prompt opgeslagen in: {AppConfigStore.ConfigPath}");
         }

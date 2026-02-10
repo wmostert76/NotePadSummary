@@ -13,9 +13,9 @@ internal sealed class SystemPromptForm : Form
 
     public string SystemPromptText => _textBox.Text;
 
-    public SystemPromptForm(string effectivePrompt, string defaultPrompt)
+    public SystemPromptForm(string title, string description, string effectivePrompt, string defaultPrompt)
     {
-        Text = "System prompt";
+        Text = title;
         Size = new Size(820, 560);
         MinimumSize = new Size(640, 420);
         StartPosition = FormStartPosition.CenterParent;
@@ -35,7 +35,7 @@ internal sealed class SystemPromptForm : Form
         {
             Dock = DockStyle.Fill,
             AutoSize = true,
-            Text = "Pas hier de system prompt aan. Deze wordt opgeslagen in je Documents folder (OneDrive sync) en geldt voor samenvatten en SO."
+            Text = description
         };
 
         _textBox = new TextBox
@@ -95,4 +95,3 @@ internal sealed class SystemPromptForm : Form
         CancelButton = _cancelButton;
     }
 }
-

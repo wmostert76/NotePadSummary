@@ -320,7 +320,10 @@ public class NoteForm : Form
     {
         if (_tabControl.TabCount > 1)
         {
-            _tabControl.TabPages.Remove(_tabControl.SelectedTab);
+            // SelectedTab can be null in edge cases; guard to avoid null warnings.
+            var selected = _tabControl.SelectedTab;
+            if (selected != null)
+                _tabControl.TabPages.Remove(selected);
         }
     }
 
@@ -469,7 +472,8 @@ Notities:
 {notes}
 """;
 
-        return await ExecuteCodexPromptAsync(prompt);
+        var systemPrompt = AppConfigStore.GetEffectiveSystemPrompt(_config, AppConfigStore.PromptKind.Summary);
+        return await ExecuteCodexPromptAsync(prompt, systemPrompt);
     }
 
     private async Task<string> GenerateSalesOpportunityAsync(string summary)
@@ -491,12 +495,12 @@ Input samenvatting:
 {summary}
 """;
 
-        return await ExecuteCodexPromptAsync(prompt);
+        var systemPrompt = AppConfigStore.GetEffectiveSystemPrompt(_config, AppConfigStore.PromptKind.SalesOpportunity);
+        return await ExecuteCodexPromptAsync(prompt, systemPrompt);
     }
 
-    private async Task<string> ExecuteCodexPromptAsync(string prompt)
+    private async Task<string> ExecuteCodexPromptAsync(string prompt, string systemPrompt)
     {
-        var systemPrompt = AppConfigStore.GetEffectiveSystemPrompt(_config);
         if (!string.IsNullOrWhiteSpace(systemPrompt))
         {
             prompt = $"""
