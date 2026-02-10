@@ -13,7 +13,21 @@ public sealed class AppConfig
 internal static class AppConfigStore
 {
     // Keep this in-code as requested; users can override via config in Documents.
-    public const string DefaultSystemPrompt =
+    // This matches the "old" behavior/style expectations (bullets, compact, NL).
+    public const string DefaultSystemPrompt = """
+Je schrijft in het Nederlands.
+
+Stijlregels:
+- Gebruik korte, natuurlijke zinnen.
+- Gebruik bullets met een streepje (-) wanneer je een samenvatting/overzicht geeft.
+- Houd tekst compact en zakelijk (geen lange uitleg).
+- Technische termen en namen behouden.
+- Schrijf waar mogelijk in tegenwoordige formulering (bijv. "Ik heb contact gehad met...", "Gebruiker gaat morgen...").
+- Voeg geen voorwoorden, excuses of meta-tekst toe; geef direct het resultaat.
+""";
+
+    // Migration: earlier version used a generic default. If users never changed anything, don't treat that as an override.
+    private const string LegacyDefaultSystemPrompt =
         "Je bent een betrouwbare assistent. Volg de regels in de prompt strikt. " +
         "Geef alleen het resultaat, zonder extra uitleg of voorwoorden.";
 
@@ -36,7 +50,13 @@ internal static class AppConfigStore
                 return new AppConfig();
 
             var json = File.ReadAllText(ConfigPath);
-            return JsonSerializer.Deserialize<AppConfig>(json, JsonOptions) ?? new AppConfig();
+            var cfg = JsonSerializer.Deserialize<AppConfig>(json, JsonOptions) ?? new AppConfig();
+
+            // If a config contains the legacy default, clear it so the new default takes effect.
+            if (string.Equals(NormalizeSystemPrompt(cfg.SystemPrompt), LegacyDefaultSystemPrompt, StringComparison.Ordinal))
+                cfg.SystemPrompt = null;
+
+            return cfg;
         }
         catch
         {
