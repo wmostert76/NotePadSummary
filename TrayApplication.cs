@@ -11,6 +11,7 @@ public class TrayApplication : IDisposable
     private readonly NotifyIcon _trayIcon;
     private readonly ContextMenuStrip _contextMenu;
     private readonly ToolStripMenuItem _startupMenuItem;
+    private readonly AppConfig _config;
     private NoteForm? _noteForm;
     private bool _disposed;
 
@@ -32,6 +33,8 @@ public class TrayApplication : IDisposable
 
     public TrayApplication()
     {
+        _config = AppConfigStore.Load();
+
         // Maak context menu
         _contextMenu = new ContextMenuStrip();
         _contextMenu.Items.Add("Notities openen", null, OnOpenNotes);
@@ -45,6 +48,8 @@ public class TrayApplication : IDisposable
         };
         _startupMenuItem.CheckedChanged += OnStartupChanged;
         _contextMenu.Items.Add(_startupMenuItem);
+
+        _contextMenu.Items.Add("System prompt...", null, OnSystemPrompt);
 
         _contextMenu.Items.Add("-");
         _contextMenu.Items.Add("Over...", null, OnAbout);
@@ -171,7 +176,7 @@ public class TrayApplication : IDisposable
     {
         if (_noteForm == null || _noteForm.IsDisposed)
         {
-            _noteForm = new NoteForm();
+            _noteForm = new NoteForm(_config);
             _noteForm.Show();
         }
         else if (_noteForm.Visible)
@@ -192,6 +197,28 @@ public class TrayApplication : IDisposable
     {
         using var aboutForm = new AboutForm();
         aboutForm.ShowDialog();
+    }
+
+    private void OnSystemPrompt(object? sender, EventArgs e)
+    {
+        try
+        {
+            using var form = new SystemPromptForm(
+                AppConfigStore.GetEffectiveSystemPrompt(_config),
+                AppConfigStore.DefaultSystemPrompt);
+
+            if (form.ShowDialog() != DialogResult.OK)
+                return;
+
+            _config.SystemPrompt = form.SystemPromptText;
+            AppConfigStore.Save(_config);
+            ShowBalloon("NotePad Summary", $"System prompt opgeslagen in: {AppConfigStore.ConfigPath}");
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Kon system prompt niet opslaan: {ex.Message}", "Fout",
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
     }
 
     private void OnExit(object? sender, EventArgs e)

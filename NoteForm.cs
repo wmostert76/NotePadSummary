@@ -11,9 +11,12 @@ public class NoteForm : Form
 {
     private readonly TabControl _tabControl;
     private readonly Label _statusLabel;
+    private readonly AppConfig _config;
 
-    public NoteForm()
+    public NoteForm(AppConfig config)
     {
+        _config = config ?? throw new ArgumentNullException(nameof(config));
+
         // Form instellingen
         Text = "NotePad Summary";
         Size = new Size(900, 800);
@@ -493,6 +496,18 @@ Input samenvatting:
 
     private async Task<string> ExecuteCodexPromptAsync(string prompt)
     {
+        var systemPrompt = AppConfigStore.GetEffectiveSystemPrompt(_config);
+        if (!string.IsNullOrWhiteSpace(systemPrompt))
+        {
+            prompt = $"""
+[SYSTEM]
+{systemPrompt}
+
+[USER]
+{prompt}
+""";
+        }
+
         var escapedPrompt = prompt
             .Replace("\\", "\\\\")
             .Replace("\"", "\\\"")
