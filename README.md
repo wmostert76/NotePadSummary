@@ -1,29 +1,72 @@
-﻿# Notepad Summary
+# 📝 NotePad Summary
 
-## Overview
-- Repository: $name
-- Owner: wmostert76
-- Default branch: $branch
+> AI-Powered Note Summarization Tool | System Tray Application | Powered by Codex CLI
 
-## Features
-- Consistente repo-opmaak
-- Automatische versie-releases
-- Automatische changelog updates
+Een handige Windows systray applicatie waarmee je snel notities kunt maken en automatisch laten samenvatten door AI.
 
-## Getting Started
-`ash
-git clone https://github.com/wmostert76/notepad-summary.git
-cd notepad-summary
-`
+## ✨ Features
 
-## Usage
-- Werk op de default branch voor standaard release-flow.
-- Elke push triggert automatische versieverhoging en release-notes.
+- **Systray Applicatie** - Draait op de achtergrond met een handig geel notitie-icoontje
+- **Globale Hotkey** - `Ctrl + NumPad+` opent direct het notitievenster
+- **Tabbladen** - Meerdere notities tegelijk open, elk met datum/tijd
+- **AI Samenvatting** - Zet rommelige notities om in bondige bullet points via Codex CLI
+- **SO-knop + SO-veld** - Zet een samenvatting om naar compacte Sales Opportunity bullets in een apart veld
+- **Auto Clipboard** - Samenvatting wordt automatisch naar klembord gekopieerd
+- **Windows Startup** - Optioneel automatisch starten met Windows
 
-## Contributing
-1. Maak je wijziging.
-2. Commit en push.
-3. Controleer de Actions en release-output.
+## 🚀 Installatie
 
-## License
-Proprietary (tenzij anders aangegeven).
+### Vereisten
+- Windows 10/11
+- [.NET 8.0 Runtime](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [Codex CLI](https://github.com/openai/codex) geïnstalleerd en geconfigureerd
+
+### Bouwen
+```bash
+git clone https://github.com/wmostert76/NotePadSummary.git
+cd NotePadSummary
+dotnet build --configuration Release
+```
+
+### Uitvoeren
+```bash
+./bin/Release/net8.0-windows/NotePadSummary.exe
+```
+
+## 📖 Gebruik
+
+| Actie | Sneltoets |
+|-------|-----------|
+| Notities openen | `Ctrl + NumPad+` |
+| Nieuw tabblad | `Ctrl + T` of hotkey als venster open is |
+| Tabblad sluiten | Rechtermuisklik op tab |
+| Samenvatten | Klik "Samenvatten" of `Ctrl + Enter` |
+| Sales Opportunity maken | Klik `SO` (op basis van samenvatting) |
+| Venster verbergen | `Escape` |
+
+## 🎨 Screenshots
+
+De applicatie toont een gesplitst venster:
+- **Boven**: Notities invoeren
+- **Onder**: AI-gegenereerde samenvatting
+
+## 📋 Samenvatting Stijl
+
+De AI genereert bondige samenvattingen in bullet-point formaat:
+```
+- Telefoongesprek gevoerd met Jantje (Inkoop).
+- Printprobleem gemeld, foutmelding driver not found.
+- Driver opnieuw geïnstalleerd via fabrikant.
+- Testpagina succesvol geprint.
+- Ticket gesloten.
+```
+
+## 🛠️ Technologie
+
+- C# / .NET 8.0
+- Windows Forms
+- Codex CLI voor AI samenvatting
+
+---
+
+**Met liefde voor AAD gemaakt door WAM-Software © since 1997 with Claude CLI**
